@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Storage - ShiroNEX</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #000000 0%, #001a33 50%, #003366 100%);
+            z-index: -2;
+        }
+
+        .light-beam {
+            position: fixed;
+            top: -50%;
+            right: -10%;
+            width: 40%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(0, 150, 255, 0.3), rgba(0, 200, 255, 0.5), transparent);
+            transform: rotate(25deg);
+            animation: shimmer 8s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { opacity: 0.4; transform: rotate(25deg) translateX(0); }
+            50% { opacity: 0.7; transform: rotate(25deg) translateX(50px); }
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            font-style: italic;
+            letter-spacing: 2px;
+            cursor: pointer;
+        }
+
+        header {
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 20, 40, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: rgba(0, 150, 255, 0.3);
+            transform: translateX(-5px);
+        }
+
+        main {
+            padding: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 0 0 20px rgba(0, 150, 255, 0.5);
+            animation: fadeIn 1s ease-in;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 1.2em;
+            margin-bottom: 60px;
+            color: #ccc;
+            animation: fadeIn 1s ease-in 0.2s both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .content-card {
+            background: linear-gradient(135deg, rgba(20, 60, 100, 0.4), rgba(10, 40, 70, 0.6));
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.8s ease-out;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+
+        .content-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 150, 255, 0.5);
+            box-shadow: 0 25px 70px rgba(0, 150, 255, 0.2);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-title {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #0096ff;
+        }
+
+        .card-content {
+            line-height: 1.6;
+            color: #ddd;
+        }
+
+        .storage-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .storage-list li {
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .storage-list li:last-child {
+            border-bottom: none;
+        }
+
+        .storage-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 150, 255, 0.2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .feature-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .feature-item:hover {
+            background: rgba(0, 150, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .feature-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .pricing-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .pricing-table th,
+        .pricing-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .pricing-table th {
+            background: rgba(0, 150, 255, 0.1);
+            color: #0096ff;
+        }
+
+        .pricing-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 20, 40, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-nav {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .footer-icon {
+            cursor: pointer;
+            transition: transform 0.3s;
+            filter: brightness(0.9);
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .footer-icon:hover {
+            transform: translateY(-3px);
+            filter: brightness(1.2);
+        }
+
+        .footer-icon.active {
+            transform: translateY(-3px);
+            filter: brightness(1.2);
+            box-shadow: 0 0 15px rgba(0, 150, 255, 0.6);
+            border-radius: 8px;
+            padding: 5px;
+            background: rgba(0, 150, 255, 0.1);
+        }
+
+        .footer-icon.active svg {
+            filter: drop-shadow(0 0 8px rgba(0, 150, 255, 0.8));
+        }
+
+        /* Footer hide/show functionality */
+        footer.hidden {
+            transform: translateY(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        footer {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .menu-btn.hide-btn {
+            background: rgba(0, 150, 255, 0.2);
+            border-radius: 8px;
+            padding: 8px;
+            transition: all 0.3s;
+        }
+
+        .menu-btn.hide-btn:hover {
+            background: rgba(0, 150, 255, 0.4);
+            transform: scale(1.1);
+        }
+
+        .menu-btn.hide-btn.active {
+            background: rgba(0, 150, 255, 0.6);
+        }
+
+        /* Floating menu when footer is hidden */
+        .floating-menu {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 20, 40, 0.9);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(0, 150, 255, 0.3);
+            display: none;
+            z-index: 1000;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .floating-menu.show {
+            display: block;
+        }
+
+        .floating-menu .menu-btn {
+            background: rgba(0, 150, 255, 0.2);
+            border-radius: 8px;
+            padding: 8px;
+            transition: all 0.3s;
+        }
+
+        .floating-menu .menu-btn:hover {
+            background: rgba(0, 150, 255, 0.4);
+            transform: scale(1.1);
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+
+        .user-menu {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .menu-btn {
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .menu-btn span {
+            width: 30px;
+            height: 3px;
+            background: #fff;
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+
+        .menu-btn:hover span {
+            background: #0096ff;
+        }
+
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            main {
+                padding: 20px;
+            }
+
+            header {
+                padding: 15px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+    <div class="light-beam"></div>
+
+    <header>
+        <a href="index.html" class="back-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back to Home
+        </a>
+        <div class="logo" onclick="window.location.href='index.html'">ShiroNEX</div>
+    </header>
+
+    <main>
+        <h1>Cloud Storage</h1>
+        <p class="subtitle">Coming Soon</p>
+        
+        <div class="content-grid">
+            <div class="content-card" style="grid-column: 1 / -1; text-align: center;">
+                <h3 class="card-title">☁️ Under Construction</h3>
+                <div class="card-content">
+                    <p style="font-size: 1.5em; margin-bottom: 30px; color: #ccc;">
+                        We're working hard to bring you the best cloud storage solutions and data security guides.
+                    </p>
+                    <div style="font-size: 4em; margin: 40px 0; opacity: 0.7;">🔒</div>
+                    <p style="font-size: 1.2em; color: #999;">
+                        Stay tuned for comprehensive reviews of cloud storage providers and data backup solutions.
+                    </p>
+                </div>
+            </div>
+        </div>
+                        <li>
+                            <div class="storage-icon">📁</div>
+                            <div>
+                                <strong>Google Drive</strong><br>
+                                <small>15GB free, integrated with Google Workspace</small>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="storage-icon">☁️</div>
+                            <div>
+                                <strong>Dropbox</strong><br>
+                                <small>2GB free, excellent file synchronization</small>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="storage-icon">📦</div>
+                            <div>
+                                <strong>OneDrive</strong><br>
+                                <small>5GB free, integrated with Microsoft 365</small>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="storage-icon">🍎</div>
+                            <div>
+                                <strong>iCloud</strong><br>
+                                <small>5GB free, seamless Apple ecosystem integration</small>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <h3 class="card-title">Key Features</h3>
+                <div class="card-content">
+                    <div class="feature-grid">
+                        <div class="feature-item">
+                            <div class="feature-icon">🔄</div>
+                            <div><strong>Sync</strong></div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">🔒</div>
+                            <div><strong>Security</strong></div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">📱</div>
+                            <div><strong>Mobile Access</strong></div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">👥</div>
+                            <div><strong>Sharing</strong></div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">🔍</div>
+                            <div><strong>Search</strong></div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">📊</div>
+                            <div><strong>Analytics</strong></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <h3 class="card-title">Storage Plans</h3>
+                <div class="card-content">
+                    <table class="pricing-table">
+                        <thead>
+                            <tr>
+                                <th>Service</th>
+                                <th>Free</th>
+                                <th>Paid Plans</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Google Drive</td>
+                                <td>15GB</td>
+                                <td>100GB - 30TB</td>
+                            </tr>
+                            <tr>
+                                <td>Dropbox</td>
+                                <td>2GB</td>
+                                <td>2TB - Unlimited</td>
+                            </tr>
+                            <tr>
+                                <td>OneDrive</td>
+                                <td>5GB</td>
+                                <td>100GB - 6TB</td>
+                            </tr>
+                            <tr>
+                                <td>iCloud</td>
+                                <td>5GB</td>
+                                <td>50GB - 2TB</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <h3 class="card-title">Use Cases</h3>
+                <div class="card-content">
+                    <ul class="storage-list">
+                        <li>
+                            <div class="storage-icon">💼</div>
+                            <div>
+                                <strong>Business</strong><br>
+                                <small>Team collaboration and document management</small>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="storage-icon">🎨</div>
+                            <div>
+                                <strong>Creative Work</strong><br>
+                                <small>Photo and video storage for designers</small>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="storage-icon">📚</div>
+                            <div>
+                                <strong>Personal</strong><br>
+                                <small>Backup important files and memories</small>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="storage-icon">🎓</div>
+                            <div>
+                                <strong>Education</strong><br>
+                                <small>Student projects and research materials</small>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="logo" onclick="window.location.href='index.html'">ShiroNEX</div>
+        <div class="footer-nav">
+            <a href="index.html" class="footer-icon">
+                <svg width="35" height="35" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9,22 9,12 15,12 15,22"></polyline>
+                </svg>
+            </a>
+            <a href="operating-system.html" class="footer-icon">
+                <svg width="35" height="35" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                    <line x1="8" y1="21" x2="16" y2="21"></line>
+                    <line x1="12" y1="17" x2="12" y2="21"></line>
+                    <path d="M6 9h12M6 12h12M6 15h8"></path>
+                </svg>
+            </a>
+            <a href="pc-laptop.html" class="footer-icon">
+                <svg width="35" height="35" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                    <line x1="8" y1="21" x2="16" y2="21"></line>
+                    <line x1="12" y1="17" x2="12" y2="21"></line>
+                </svg>
+            </a>
+            <a href="music.html" class="footer-icon">
+                <svg width="35" height="35" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+                    <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+                </svg>
+            </a>
+            <a href="cloud-storage.html" class="footer-icon active">
+                <svg width="35" height="35" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>
+                    <polyline points="12 13 12 17"></polyline>
+                    <polyline points="10 15 12 13 14 15"></polyline>
+                </svg>
+            </a>
+            <a href="hardware.html" class="footer-icon">
+                <svg width="35" height="35" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                    <rect x="9" y="9" width="6" height="6"></rect>
+                    <line x1="9" y1="1" x2="9" y2="4"></line>
+                    <line x1="15" y1="1" x2="15" y2="4"></line>
+                </svg>
+            </a>
+            <a href="game-engine.html" class="footer-icon">
+                <svg width="35" height="35" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M6 12h4m2 0h4"/>
+                    <circle cx="17" cy="11" r="1" fill="currentColor"/>
+                    <circle cx="19" cy="13" r="1" fill="currentColor"/>
+                    <path d="M2 8h20c0-2.21-1.79-4-4-4H6C3.79 4 2 5.79 2 8zm0 0v8c0 2.21 1.79 4 4 4h12c2.21 0 4-1.79 4-4V8"/>
+                </svg>
+            </a>
+        </div>
+        <div class="user-menu">
+            <a href="support.html" class="footer-icon">
+                <svg width="35" height="35" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+            </a>
+            <div class="menu-btn hide-btn" id="hideFooterBtn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating menu when footer is hidden -->
+    <div class="floating-menu" id="floatingMenu">
+        <div class="menu-btn" id="showFooterBtn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
